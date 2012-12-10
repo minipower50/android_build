@@ -16,6 +16,9 @@ KERNEL_CONFIG := $(KERNEL_OUT)/.config
 ifeq ($(BOARD_USES_UBOOT),true)
 	TARGET_PREBUILT_INT_KERNEL := $(KERNEL_OUT)/arch/$(TARGET_ARCH)/boot/uImage
 	TARGET_PREBUILT_INT_KERNEL_TYPE := uImage
+else ifeq ($(BOARD_USES_UNCOMPRESSED_BOOT),true)
+	TARGET_PREBUILT_INT_KERNEL := $(KERNEL_OUT)/arch/$(TARGET_ARCH)/boot/Image
+	TARGET_PREBUILT_INT_KERNEL_TYPE := Image
 else
 	TARGET_PREBUILT_INT_KERNEL := $(KERNEL_OUT)/arch/$(TARGET_ARCH)/boot/zImage
 	TARGET_PREBUILT_INT_KERNEL_TYPE := zImage
@@ -23,6 +26,17 @@ endif
 
 ifeq "$(wildcard $(KERNEL_SRC) )" ""
     ifneq ($(TARGET_PREBUILT_KERNEL),)
+        HAS_PREBUILT_KERNEL := true
+        NEEDS_KERNEL_COPY := true
+    else
+        $(foreach cf,$(PRODUCT_COPY_FILES), \
+            $(eval _src := $(call word-colon,1,$(cf))) \
+            $(eval _dest := $(call word-colon,2,$(cf))) \
+            $(ifeq kernel,$(_dest), \
+                $(eval HAS_PREBUILT_KERNEL := true)))
+    endif
+
+    ifneq ($(HAS_PREBUILT_KERNEL),)
         $(warning ***************************************************************)
         $(warning * Using prebuilt kernel binary instead of source              *)
         $(warning * THIS IS DEPRECATED, AND WILL BE DISCONTINUED                *)
@@ -49,6 +63,7 @@ ifeq "$(wildcard $(KERNEL_SRC) )" ""
         $(error "NO KERNEL")
     endif
 else
+    NEEDS_KERNEL_COPY := true
     ifeq ($(TARGET_KERNEL_CONFIG),)
         $(warning **********************************************************)
         $(warning * Kernel source found, but no configuration was defined  *)
@@ -138,10 +153,11 @@ endif # FULL_KERNEL_BUILD
 
 ## Install it
 
+ifeq ($(NEEDS_KERNEL_COPY),true)
 file := $(INSTALLED_KERNEL_TARGET)
 ALL_PREBUILT += $(file)
 $(file) : $(KERNEL_BIN) | $(ACP)
 	$(transform-prebuilt-to-target)
 
 ALL_PREBUILT += $(INSTALLED_KERNEL_TARGET)
-
+endif
