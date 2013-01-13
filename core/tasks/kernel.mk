@@ -131,13 +131,6 @@ ifeq ($(TARGET_ARCH),arm)
         endif
       endif
     endif
-    ifneq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN_DIR),)
-        ifeq ($(HOST_OS),darwin)
-            ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/darwin-x86/$(TARGET_ARCH)/$(TARGET_KERNEL_CUSTOM_TOOLCHAIN_DIR)/bin/arm-eabi-"
-        else
-            ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/$(TARGET_ARCH)/$(TARGET_KERNEL_CUSTOM_TOOLCHAIN_DIR)/bin/arm-eabi-"
-        endif
-    else
     ifneq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),)
         ifeq ($(HOST_OS),darwin)
             ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilt/darwin-x86/toolchain/$(TARGET_KERNEL_CUSTOM_TOOLCHAIN)/bin/arm-eabi-"
@@ -146,7 +139,6 @@ ifeq ($(TARGET_ARCH),arm)
         endif
     else
         ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ARM_EABI_TOOLCHAIN)/arm-eabi-"
-    endif
     endif
     ccache = 
 endif
