@@ -254,13 +254,19 @@ function settitle()
             # Prompts exist, but no hardstatus
             PROMPT_COMMAND="echo -ne \"\033]0;${USER}@${HOSTNAME}: ${PWD}\007\";${PROMPT_COMMAND}"
         fi
-        if [ -z "$apps" ]; then
-            PROMPT_PREFIX="[${arch}-${product}-${variant}]"
-        else
-            PROMPT_PREFIX="[$arch $apps $variant]"
+        if [ ! -z "$ANDROID_PROMPT_PREFIX" ]; then
+            PROMPT_COMMAND=$(echo $PROMPT_COMMAND | sed -e 's/$ANDROID_PROMPT_PREFIX //g')
         fi
+
+        if [ -z "$apps" ]; then
+            ANDROID_PROMPT_PREFIX="[${arch}-${product}-${variant}]"
+        else
+            ANDROID_PROMPT_PREFIX="[$arch $apps $variant]"
+        fi
+        export ANDROID_PROMPT_PREFIX
+
         # Inject build data into hardstatus
-        export PROMPT_COMMAND=$(echo $PROMPT_COMMAND | sed -e 's/\\033]0;\(.*\)\\007/\\033]0;$PROMPT_PREFIX \1\\007/g')
+        export PROMPT_COMMAND=$(echo $PROMPT_COMMAND | sed -e 's/\\033]0;\(.*\)\\007/\\033]0;$ANDROID_PROMPT_PREFIX \1\\007/g')
     fi
 }
 
