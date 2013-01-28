@@ -136,17 +136,28 @@ function setpaths()
     prebuiltdir=$(getprebuilt)
     gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
 
-    if [ "$LINARO_47_BUILD" == "true" ]; then
-        export ANDROID_EABI_TOOLCHAIN_DIR=linaro-4.7
-        export ARM_EABI_TOOLCHAIN_DIR=linaro-4.7
-    else
-        if [ "$GOOGLE_47_BUILD" == "true" ]; then
-            export ANDROID_EABI_TOOLCHAIN_DIR=arm-linux-androideabi-4.7
-            export ARM_EABI_TOOLCHAIN_DIR=arm-eabi-4.7
+    if [ -z "$ANDROID_EABI_TOOLCHAIN_DIR" ]; then
+        if [ "$LINARO_47_BUILD" == "true" ]; then
+            export ANDROID_EABI_TOOLCHAIN_DIR=linaro-4.7
         else
-            # default Google 4.6 toolchain
-            export ANDROID_EABI_TOOLCHAIN_DIR=arm-linux-androideabi-4.6
-            export ARM_EABI_TOOLCHAIN_DIR=arm-eabi-4.6
+            if [ "$GOOGLE_47_BUILD" == "true" ]; then
+                export ANDROID_EABI_TOOLCHAIN_DIR=arm-linux-androideabi-4.7
+            else
+                # default Google 4.6 toolchain
+                export ANDROID_EABI_TOOLCHAIN_DIR=arm-linux-androideabi-4.6
+            fi
+        fi
+    fi
+    if [ -z "$ARM_EABI_TOOLCHAIN_DIR" ]; then
+        if [ "$LINARO_47_BUILD" == "true" ]; then
+            export ARM_EABI_TOOLCHAIN_DIR=linaro-4.7
+        else
+            if [ "$GOOGLE_47_BUILD" == "true" ]; then
+                export ARM_EABI_TOOLCHAIN_DIR=arm-eabi-4.7
+            else
+                # default Google 4.6 toolchain
+                export ARM_EABI_TOOLCHAIN_DIR=arm-eabi-4.6
+            fi
         fi
     fi
 
