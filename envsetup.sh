@@ -136,29 +136,12 @@ function setpaths()
     prebuiltdir=$(getprebuilt)
     gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
 
+    # Use Google's 4.7 toolchains by default
     if [ -z "$ANDROID_EABI_TOOLCHAIN_DIR" ]; then
-        if [ "$LINARO_47_BUILD" == "true" ]; then
-            export ANDROID_EABI_TOOLCHAIN_DIR=linaro-4.7
-        else
-            if [ "$GOOGLE_47_BUILD" == "true" ]; then
-                export ANDROID_EABI_TOOLCHAIN_DIR=arm-linux-androideabi-4.7
-            else
-                # default Google 4.6 toolchain
-                export ANDROID_EABI_TOOLCHAIN_DIR=arm-linux-androideabi-4.6
-            fi
-        fi
+        export ANDROID_EABI_TOOLCHAIN_DIR=arm-linux-androideabi-4.7
     fi
     if [ -z "$ARM_EABI_TOOLCHAIN_DIR" ]; then
-        if [ "$LINARO_47_BUILD" == "true" ]; then
-            export ARM_EABI_TOOLCHAIN_DIR=linaro-4.7
-        else
-            if [ "$GOOGLE_47_BUILD" == "true" ]; then
-                export ARM_EABI_TOOLCHAIN_DIR=arm-eabi-4.7
-            else
-                # default Google 4.6 toolchain
-                export ARM_EABI_TOOLCHAIN_DIR=arm-eabi-4.6
-            fi
-        fi
+        export ARM_EABI_TOOLCHAIN_DIR=arm-eabi-4.7
     fi
 
     # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
