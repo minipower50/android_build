@@ -225,8 +225,6 @@ function set_stuff_for_environment()
     set_java_home
     setpaths
     set_sequence_number
-
-    export ANDROID_BUILD_TOP=$(gettop)
 }
 
 function set_sequence_number()
@@ -278,13 +276,15 @@ function addcompletions()
         return
     fi
 
-    dir="sdk/bash_completion"
+    dirs="sdk/bash_completion vendor/cm/bash_completion"
+    for dir in $dirs; do
     if [ -d ${dir} ]; then
         for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
             echo "including $f"
             . $f
         done
     fi
+    done
 }
 
 function choosetype()
@@ -1876,3 +1876,5 @@ done
 unset f
 
 addcompletions
+
+export ANDROID_BUILD_TOP=$(gettop)
