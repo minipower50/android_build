@@ -73,8 +73,7 @@ ifeq ($(USE_LINARO_COMPILER_FLAGS),yes)
                             -Wstrict-aliasing=3 \
                             -Werror=strict-aliasing \
                             -funswitch-loops \
-                            -fno-tree-vectorize \
-                            -fno-aggressive-loop-optimizations
+                            -fno-tree-vectorize
 else
     TARGET_arm_CFLAGS :=    -O2 \
                             -fgcse-after-reload \
@@ -86,8 +85,7 @@ else
                             -fomit-frame-pointer \
                             -fstrict-aliasing \
                             -Wstrict-aliasing=3 \
-                            -Werror=strict-aliasing \
-                            -fno-aggressive-loop-optimizations
+                            -Werror=strict-aliasing
 endif
 
 # Modules can choose to compile some source as thumb. As
@@ -101,8 +99,7 @@ ifeq ($(ARCH_ARM_HAVE_THUMB_SUPPORT),true)
                                 -fomit-frame-pointer \
                                 -fstrict-aliasing \
                                 -Wstrict-aliasing=3 \
-                                -Werror=strict-aliasing \
-                                -fno-aggressive-loop-optimizations
+                                -Werror=strict-aliasing
     else
         TARGET_thumb_CFLAGS :=  -mthumb \
                                 -Os \
@@ -115,8 +112,7 @@ ifeq ($(ARCH_ARM_HAVE_THUMB_SUPPORT),true)
                                 -fomit-frame-pointer \
                                 -fstrict-aliasing \
                                 -Wstrict-aliasing=3 \
-                                -Werror=strict-aliasing \
-                                -fno-aggressive-loop-optimizations
+                                -Werror=strict-aliasing
     endif
 else
 TARGET_thumb_CFLAGS := $(TARGET_arm_CFLAGS)
@@ -161,7 +157,6 @@ TARGET_GLOBAL_CFLAGS += \
 			-Werror=format-security \
 			-D_FORTIFY_SOURCE=1 \
 			-fno-short-enums \
-			-fno-aggressive-loop-optimizations \
 			$(arch_variant_cflags)
 
 android_config_h := $(call select-android-config-h,linux-arm)
@@ -205,7 +200,7 @@ else
 TARGET_GLOBAL_CFLAGS += -mno-thumb-interwork
 endif
 
-TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden -fno-aggressive-loop-optimizations
+TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 # disable ISO C++ mode by default
 DEBUG_NO_STDCXX11 ?= yes
 ifneq ($(DEBUG_NO_STDCXX11),yes)
@@ -221,8 +216,7 @@ ifndef TARGET_EXTRA_CFLAGS
 			  -Werror=strict-aliasing \
 			  -fgcse-after-reload \
 			  -frerun-cse-after-loop \
-			  -frename-registers \
-			  -fno-aggressive-loop-optimizations
+			  -frename-registers
 else
   TARGET_RELEASE_CFLAGS += \
 			  -DNDEBUG \
@@ -231,8 +225,7 @@ else
 			  -Werror=strict-aliasing \
 			  -fgcse-after-reload \
 			  -frerun-cse-after-loop \
-			  -frename-registers \
-			  -fno-aggressive-loop-optimizations
+			  -frename-registers
 endif
 
 libc_root := bionic/libc
