@@ -69,13 +69,25 @@ TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 ifeq ($(USE_LINARO_COMPILER_FLAGS),yes)
     TARGET_arm_CFLAGS :=    -O3 \
                             -fomit-frame-pointer \
-                            -fstrict-aliasing    \
-                            -funswitch-loops
+                            -fstrict-aliasing \
+                            -Wstrict-aliasing=3 \
+                            -Werror=strict-aliasing \
+                            -funswitch-loops \
+                            -fno-tree-vectorize \
+                            -fno-aggressive-loop-optimizations
 else
     TARGET_arm_CFLAGS :=    -O2 \
+                            -fgcse-after-reload \
+                            -fipa-cp-clone \
+                            -fpredictive-commoning \
+                            -fsched-spec-load \
+                            -funswitch-loops \
+                            -fvect-cost-model \
                             -fomit-frame-pointer \
-                            -fstrict-aliasing    \
-                            -funswitch-loops
+                            -fstrict-aliasing \
+                            -Wstrict-aliasing=3 \
+                            -Werror=strict-aliasing \
+                            -fno-aggressive-loop-optimizations
 endif
 
 # Modules can choose to compile some source as thumb. As
@@ -88,15 +100,23 @@ ifeq ($(ARCH_ARM_HAVE_THUMB_SUPPORT),true)
                                 -O3 \
                                 -fomit-frame-pointer \
                                 -fstrict-aliasing \
-                                -Wstrict-aliasing=2 \
-                                -Werror=strict-aliasing
+                                -Wstrict-aliasing=3 \
+                                -Werror=strict-aliasing \
+                                -fno-aggressive-loop-optimizations
     else
         TARGET_thumb_CFLAGS :=  -mthumb \
                                 -Os \
+                                -fgcse-after-reload \
+                                -fipa-cp-clone \
+                                -fpredictive-commoning \
+                                -fsched-spec-load \
+                                -funswitch-loops \
+                                -fvect-cost-model \
                                 -fomit-frame-pointer \
                                 -fstrict-aliasing \
-                                -Wstrict-aliasing=2 \
-                                -Werror=strict-aliasing
+                                -Wstrict-aliasing=3 \
+                                -Werror=strict-aliasing \
+                                -fno-aggressive-loop-optimizations
     endif
 else
 TARGET_thumb_CFLAGS := $(TARGET_arm_CFLAGS)
@@ -141,6 +161,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-Werror=format-security \
 			-D_FORTIFY_SOURCE=1 \
 			-fno-short-enums \
+			-fno-aggressive-loop-optimizations \
 			$(arch_variant_cflags)
 
 android_config_h := $(call select-android-config-h,linux-arm)
@@ -184,7 +205,7 @@ else
 TARGET_GLOBAL_CFLAGS += -mno-thumb-interwork
 endif
 
-TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
+TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden -fno-aggressive-loop-optimizations
 # disable ISO C++ mode by default
 DEBUG_NO_STDCXX11 ?= yes
 ifneq ($(DEBUG_NO_STDCXX11),yes)
@@ -192,14 +213,27 @@ TARGET_GLOBAL_CPPFLAGS += $(call cc-option,-std=gnu++11)
 endif
 
 # More flags/options can be added here
-TARGET_RELEASE_CFLAGS += \
-			-DNDEBUG \
-			-g \
-			-Wstrict-aliasing=2 \
-			-Werror=strict-aliasing \
-			-fgcse-after-reload \
-			-frerun-cse-after-loop \
-			-frename-registers
+ifndef TARGET_EXTRA_CFLAGS
+  TARGET_RELEASE_CFLAGS := \
+			  -DNDEBUG \
+			  -g \
+			  -Wstrict-aliasing=3 \
+			  -Werror=strict-aliasing \
+			  -fgcse-after-reload \
+			  -frerun-cse-after-loop \
+			  -frename-registers \
+			  -fno-aggressive-loop-optimizations
+else
+  TARGET_RELEASE_CFLAGS += \
+			  -DNDEBUG \
+			  -g \
+			  -Wstrict-aliasing=3 \
+			  -Werror=strict-aliasing \
+			  -fgcse-after-reload \
+			  -frerun-cse-after-loop \
+			  -frename-registers \
+			  -fno-aggressive-loop-optimizations
+endif
 
 libc_root := bionic/libc
 libm_root := bionic/libm
